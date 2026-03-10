@@ -13,7 +13,8 @@ COPY . .
 # Variables de entorno en build para apuntar a un path genérico en el container o dejar que NGINX reemplace
 # Para simplificar en esta prueba, Vite usará variables en tiempo de compilación.
 # En un escenario real con Nginx, el URL del backend a menudo es de un config map
-ENV VITE_API_URL=/api
+ARG VITE_API_URL=/api
+ENV VITE_API_URL=${VITE_API_URL}
 
 # Compila el frontend estático
 RUN npm run build
