@@ -45,7 +45,7 @@ resource "aws_lb_target_group" "backend_tg" {
   target_type = "ip"
 
   health_check {
-    path                = "/api" # Assuming root of API healthcheck or FastAPI Swagger
+    path                = "/" # Fixed: FastAPI defines health check at root /
     healthy_threshold   = 2
     unhealthy_threshold = 10
   }
