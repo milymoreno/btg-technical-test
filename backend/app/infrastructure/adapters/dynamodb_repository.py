@@ -11,8 +11,9 @@ class DynamoDBUserRepository(UserRepository):
         region = os.getenv("AWS_REGION", "us-east-1")
         # In actual deployment, role handles auth. For local test, consider endpoint_url.
         endpoint_url = os.getenv("DYNAMODB_ENDPOINT_URL", None)
-        aws_access_key_id = os.getenv("AWS_ACCESS_KEY_ID")
-        aws_secret_access_key = os.getenv("AWS_SECRET_ACCESS_KEY")
+        # Use fallback fake credentials in case they run uvicorn locally without env vars set
+        aws_access_key_id = os.getenv("AWS_ACCESS_KEY_ID", "fakeMyKeyId")
+        aws_secret_access_key = os.getenv("AWS_SECRET_ACCESS_KEY", "fakeSecretAccessKey")
 
         self.dynamodb = boto3.resource(
             'dynamodb', 
