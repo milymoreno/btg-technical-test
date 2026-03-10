@@ -11,7 +11,16 @@ class DynamoDBUserRepository(UserRepository):
         region = os.getenv("AWS_REGION", "us-east-1")
         # In actual deployment, role handles auth. For local test, consider endpoint_url.
         endpoint_url = os.getenv("DYNAMODB_ENDPOINT_URL", None)
-        self.dynamodb = boto3.resource('dynamodb', region_name=region, endpoint_url=endpoint_url)
+        aws_access_key_id = os.getenv("AWS_ACCESS_KEY_ID")
+        aws_secret_access_key = os.getenv("AWS_SECRET_ACCESS_KEY")
+
+        self.dynamodb = boto3.resource(
+            'dynamodb', 
+            region_name=region, 
+            endpoint_url=endpoint_url,
+            aws_access_key_id=aws_access_key_id,
+            aws_secret_access_key=aws_secret_access_key
+        )
         self.table_name = table_name or os.getenv("DYNAMODB_TABLE_NAME", "Users")
         self.table = self.dynamodb.Table(self.table_name)
 
