@@ -55,21 +55,22 @@ graph TD
 ```
 
 1. **Python con FastAPI (Backend):**
+
    - **Justificación Técnica:** FastAPI es de alto rendimiento, nativo para asincronía y lo más importante: expone automáticamente la especificación Swagger/OpenAPI (`/docs`) basándose en los modelos Pydantic definidos, ahorrando tiempo de desarrollo sin dependencias externas pesadas.
-
 2. **React con Vite (Frontend):**
+
    - **Justificación Técnica:** Vite reduce el tiempo de compilación a milisegundos. React sigue siendo el ecosistema más robusto y usado del mercado para interfaces gráficas complejas.
-
 3. **Arquitectura Hexagonal:**
+
    - **Justificación:** Mantiene la lógica de negocio aislada. Intercambiar la base de datos o el framework web en el futuro (ej. pasar de DynamoDB a PostgreSQL) requiere modificar únicamente el "Adaptador", manteniendo intacto el "Caso de Uso" y el "Dominio".
-
 4. **Amazon DynamoDB (Base de Datos):**
+
    - **Justificación de Costos y Funcionalidad:** Es serverless. En una prueba técnica, DynamoDB permite arrancar instantáneamente y cae dentro del nivel gratuito siempre activo. No requiere VPCs hipercomplejas en IaC como sí lo demandaría un cluster de RDS, manteniendo el costo en Cero Dólares ($0) bajo inactividad.
-
 5. **Amazon ECS Fargate + Application Load Balancer:**
-   - **Justificación de Costos y Funcionalidad:** Fargate cobra por segundo de ejecución de recursos asignados al contenedor (aquí usamos 0.25 vCPU y 0.5 GB RAM por componente, algo sumamente barato). El ALB funciona como el proxy reverso principal, enviando de forma segura el tráfico 80 a Frontend y el tráfico 8000 (bajo `/api`) al backend Dockerizado.
 
+   - **Justificación de Costos y Funcionalidad:** Fargate cobra por segundo de ejecución de recursos asignados al contenedor (aquí usamos 0.25 vCPU y 0.5 GB RAM por componente, algo sumamente barato). El ALB funciona como el proxy reverso principal, enviando de forma segura el tráfico 80 a Frontend y el tráfico 8000 (bajo `/api`) al backend Dockerizado.
 6. **Terraform (IaC):**
+
    - **Justificación:** Estándar agnóstico multiplataforma que permite versionar y replicar el ambiente en segundos o destruirlo (`terraform destroy`) para evitar cargos extras.
 
 ## Pasos para el Despliegue Local o en AWS
@@ -105,5 +106,3 @@ El repositorio cuenta con 3 flujos de GitHub Actions listos:
 1. Al inyectar un push a `infra/` el clúster se alinea.
 2. Al inyectar un push a `backend/` se construye la imagen y ECS descarga la nueva revisión con zero-downtime.
 3. Lo mismo para el path `frontend/`.
-
-## Fin del Documento
