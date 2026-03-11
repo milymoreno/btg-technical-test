@@ -25,3 +25,4 @@ venv/
 
 # Documentación para no rastrear cambios futuros localmente
 REDEPLOY.md
+PIPELINES_GUIDE.md
