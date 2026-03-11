@@ -25,6 +25,35 @@ Esta es una aplicación completa (Frontend + Backend + Infraestructura) para ges
 
 ## Decisiones Técnicas y Arquitectura
 
+### Diagrama de Arquitectura AWS
+
+```mermaid
+graph TD
+    Client([💻 Cliente HTTP / Navegador])
+    subgraph AWS Cloud [☁️ Nube AWS]
+        ALB[Application Load Balancer Expuesto a Internet]
+        subgraph VPC [VPC]
+            subgraph PublicSubnets [Subredes Públicas]
+                ALB
+            end
+            subgraph PrivateSubnets [Subredes Privadas + NAT]
+                Fargate_Frontend[ECS Fargate: Frontend React]
+                Fargate_Backend[ECS Fargate: Backend FastAPI]
+            end
+        end
+        DynamoDB[(DynamoDB Tabla 'Users')]
+        ECR[Elastic Container Registry]
+    end
+
+    Client -- "Internet (Puerto 80)" --> ALB
+    ALB -- "Path: /" --> Fargate_Frontend
+    ALB -- "Path: /api/*" --> Fargate_Backend
+    Fargate_Backend -- "Lectura/Escritura (IAM Role)" --> DynamoDB
+
+    ECR -. "Descarga de Imágenes" .-> Fargate_Frontend
+    ECR -. "Descarga de Imágenes" .-> Fargate_Backend
+```
+
 1. **Python con FastAPI (Backend):**
    - **Justificación Técnica:** FastAPI es de alto rendimiento, nativo para asincronía y lo más importante: expone automáticamente la especificación Swagger/OpenAPI (`/docs`) basándose en los modelos Pydantic definidos, ahorrando tiempo de desarrollo sin dependencias externas pesadas.
 
@@ -54,7 +83,7 @@ terraform init
 terraform apply -auto-approve
 ```
 
-Tomar nota de la salida `alb_dns_name`. En unos minutos la URL estará activa y rebotando tráfico correctamente a los servicios de contenedores vacíos.
+Tomar nota de la salida `alb_dns_name`. En unos minutos la URL estará activa. **La aplicación queda 100% expuesta a internet a través de este Load Balancer público**, cumpliendo con los requisitos de la prueba técnica (`pruebaTecnica.md`). El ALB rebota el tráfico adecuadamente a los servicios backend o frontend (según el path `/` o `/api`) alojados de forma segura en subredes privadas.
 
 **2. Despliegue Local (Simulado) del Software**
 
